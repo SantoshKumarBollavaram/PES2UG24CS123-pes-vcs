@@ -30,7 +30,7 @@
 | ID | Description | Screenshot |
 |----|-------------|------------|
 | 4A | `./pes log` output | ![4A](screenshots/4A.png) |
-| 4B | `find .pes -type f | sort` object growth | ![4B](screenshots/4B.png) |
+| 4B | `find .pes -type f | sort` object growth | ![4B](https://raw.githubusercontent.com/SantoshKumarBollavaram/PES2UG24CS123-pes-vcs/main/screenshots/4B.png)|
 | 4C | `cat .pes/refs/heads/main` and `cat .pes/HEAD` | ![4C](screenshots/4C.png) |
 
 ---
