@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O2
+CFLAGS = -Wall -Wextra -g
 LDFLAGS = -lcrypto
 
 # ─── Main binary ─────────────────────────────────────────────────────────────
@@ -18,7 +18,7 @@ pes: $(OBJS)
 test_objects: test_objects.o object.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-test_tree: test_tree.o object.o tree.o
+test_tree: test_tree.o tree.o object.o index.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 # ─── Convenience targets ────────────────────────────────────────────────────

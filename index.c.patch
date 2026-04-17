@@ -1,0 +1,44 @@
+--- a/index.c
++++ b/index.c
+@@ -88,16 +88,21 @@
+ }
+ 
+ static int cmp(const void *a, const void *b) {
+-    return strcmp(((const IndexEntry*)a)->path, ((const IndexEntry*)b)->path);
++    return strcmp(((IndexEntry*)a)->path, ((IndexEntry*)b)->path);
+ }
+ 
+ int index_save(const Index *index) {
+-    Index sorted = *index;
+-    qsort(sorted.entries, sorted.count, sizeof(IndexEntry), cmp);
++    // Create a temporary array of pointers to avoid stack overflow
++    IndexEntry *sorted_entries = malloc(index->count * sizeof(IndexEntry));
++    if (!sorted_entries) return -1;
++    memcpy(sorted_entries, index->entries, index->count * sizeof(IndexEntry));
++    qsort(sorted_entries, index->count, sizeof(IndexEntry), cmp);
++
+     FILE *f = fopen(".pes/index.tmp", "w");
+-    if (!f) return -1;
+-    for (int i = 0; i < s.count; i++) {
++    if (!f) { free(sorted_entries); return -1; }
++    for (int i = 0; i < index->count; i++) {
+         char hx[65];
+-        hash_to_hex(&s.entries[i].hash, hx);
+-        fprintf(f, "%o %s %" PRIu64 " %" PRIu64 " %s\n",
+-                s.entries[i].mode, hx, s.entries[i].mtime_sec, s.entries[i].size, s.entries[i].path);
++        hash_to_hex(&sorted_entries[i].hash, hx);
++        fprintf(f, "%o %s %" PRIu64 " %" PRIu64 " %s\n",
++                sorted_entries[i].mode, hx, sorted_entries[i].mtime_sec, sorted_entries[i].size, sorted_entries[i].path);
+     }
+     fflush(f);
+     int fd = fileno(f);
+@@ -105,6 +110,7 @@
+     fclose(f);
+     if (rename(".pes/index.tmp", ".pes/index") != 0) {
+         perror("rename index");
++        free(sorted_entries);
+         return -1;
+     }
++    free(sorted_entries);
+     return 0;
+ }
